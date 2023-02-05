@@ -8,22 +8,28 @@ class Inspector1(object):
         self.service_times = []
         
     def run(self, workstation_1, workstation_2, workstation_3):
-        print('Inspector 1 starting')
+        print('\***** Inspector 1 Running *****/')
         while True:
-            service_time = exponential_dist(open('data/servinsp1.dat').read().splitlines())  # <--Generate duration here
+            # Generate service time using exponential distribution
+            service_time = exponential_dist(open('data/servinsp1.dat').read().splitlines())  
             self.service_times.append(service_time)
-            li = [workstation_1.c1_buffer, workstation_2.c1_buffer,
+            # Get list of all buffers with type 1 components
+            c1_lst = [workstation_1.c1_buffer, workstation_2.c1_buffer,
                   workstation_3.c1_buffer]
-            # Finds the container with the least number of type 1 components
-            container_to_use = min(li, key=attrgetter('level'))
+            # Find the buffer with the least number of type 1 components
+            selected_buffer = min(c1_lst, key=attrgetter('level'))
+            # Wait for the service time
             yield self.env.timeout(service_time)
-            yield container_to_use.put(1)
-            if container_to_use is workstation_1.c1_buffer:
-                print('Added component 1 to workstation 1')
-            elif container_to_use is workstation_2.c1_buffer:
-                print('Added component 1 to workstation 2')
-            elif container_to_use is workstation_3.c1_buffer:
-                print('Added component 1 to workstation 3')
+            # Add type 1 component to the selected container
+            yield selected_buffer.put(1)
+            # Print which workstation received the type 1 component
+            if selected_buffer is workstation_1.c1_buffer:
+                print('\***** Transfered C1 to W1 *****/')
+            elif selected_buffer is workstation_2.c1_buffer:
+                print('\***** Transfered C1 to W2 *****/')
+            elif selected_buffer is workstation_3.c1_buffer:
+                print('\***** Transfered C1 to W3 *****/')
 
     def start_process(self, workstation_1, workstation_2, workstation_3):
+        # Start the run function as a SimPy process
         self.env.process(self.run(workstation_1, workstation_2, workstation_3))

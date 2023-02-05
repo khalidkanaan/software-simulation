@@ -1,0 +1,2 @@
+simpy==4.0.1
+coloredlogs==15.0.1
