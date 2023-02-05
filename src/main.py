@@ -10,7 +10,7 @@ from workstations.workstation3 import Workstation3
 # The main method of the program, responsible for setting up and running the simulation
 if __name__ == '__main__':
     # Define the runtime of the simulation in seconds
-    RUNTIME = 1200
+    RUNTIME = 1500
 
     print('Creating simulation environment')
     # Create the simulation environment
