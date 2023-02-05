@@ -1,0 +1,82 @@
+@startuml Class_Diagram
+class main {
+    +__main__()
+}
+
+class helper_functions{
+    +find_list_mean(lst : [])
+    +exponential_dist(lst : [])
+}
+
+package inspectors{
+    class inspector1{
+        +env : Environment
+        +service_times : []
+        +__init__(env : Environment)
+        +run(workstation_1 : Workstation1, workstation_2 : Workstation2, workstation_3: Workstation3)
+        +start_process(workstation_1 : Workstation1, workstation_2 : Workstation2, workstation_3: Workstation3)
+    }
+    class inspector2{
+        +env : Environment
+        +service_times22 : []
+        +service_times23 : []
+        +__init__(env : Environment)
+        +run(workstation_2 : Workstation2, workstation_3: Workstation3)
+        +start_process(workstation_2 : Workstation2, workstation_3: Workstation3)
+    }
+}
+
+package workstations{
+    class workstation_1{
+        +env : Environment
+        +p1 : int
+        +c1_buffer : Container
+        +__init__(env : Environment)
+        +run()
+        +start_process()
+    }
+    class workstation_2{
+        +env : Environment
+        +p2 : int
+        +c1_buffer : Container
+        +c2_buffer : Container
+        +__init__(env : Environment)
+        +run()
+        +start_process()
+    }
+    class workstation_3{
+        +env : Environment
+        +p3 : int
+        +c1_buffer : Container
+        +c3_buffer : Container
+        +__init__(env : Environment)
+        +run()
+        +start_process()
+    }
+}
+
+main -up-> simpy
+main -down-> inspector1
+main -down-> inspector2
+main --> workstation_1
+main --> workstation_2
+main --> workstation_3
+main --> helper_functions
+
+inspector1 --> operator
+inspector1 --> helper_functions
+
+inspector2 --> random
+inspector2 --> helper_functions
+
+workstation_1 --> simpy
+workstation_1 --> helper_functions
+
+workstation_2 --> simpy
+workstation_2 --> helper_functions
+
+workstation_3 --> simpy
+workstation_3 --> helper_functions
+
+helper_functions -up-> numpy
+@enduml

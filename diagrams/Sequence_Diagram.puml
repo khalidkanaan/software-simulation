@@ -1,0 +1,19 @@
+@startuml Manufacturing Facility Simulation
+title Manufacturing Facility Simulation
+
+Inspector1 -> C1: Inspects
+Inspector2 -> C2: Inspects
+Inspector2 -> C3: Inspects
+
+alt shortest queue
+C1 -> W1: Routed to buffer with smallest number of components (highest priority)
+C1 -> W2: Routed to buffer with smallest number of components
+C1 -> W3: Routed to buffer with smallest number of components (lowest priority)
+end
+
+W1 -> C1: Assembles P1 (needs one component C1, creates product P1)
+W2 -> C1: Assembles P2 (needs one component C1 and one C2, creates product P2)
+W2 -> C2: Assembles P2 (needs one component C1 and one C2, creates product P2)
+W3 -> C1: Assembles P3 (needs one component C1 and one C3, creates product P3)
+W3 -> C3: Assembles P3 (needs one component C1 and one C3, creates product P3)
+@enduml
