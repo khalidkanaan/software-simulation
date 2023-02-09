@@ -27,3 +27,10 @@ The simulation will assess the performance of the manufacturing facility and pro
 - Probability (or proportion of time) that each workstation is busy
 - Probability (or proportion of time) that each inspector remains "blocked" (and therefore idle)
 - Possible improvement of the policy that Inspector 1 follows when delivering C1 components to the different workstations to increase throughput and decrease inspector blocked/idle time.
+
+## Running Instructions
+
+To run the application, we must install the appropriate modules. To do that we will have to use the pip install command.
+Run the following commands in terminal:
+- pip install simpy
+- pip install numpy
