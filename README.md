@@ -34,3 +34,6 @@ To run the application, we must install the appropriate modules. To do that we w
 Run the following commands in terminal:
 - pip install simpy
 - pip install numpy
+
+## Project Insperation
+This project was inspired by the following github project: https://github.com/BenjaminPalko/SYSC-4005-PROJECT
