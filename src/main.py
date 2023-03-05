@@ -6,6 +6,7 @@ from inspectors.inspector2 import Inspector2
 from workstations.workstation1 import Workstation1
 from workstations.workstation2 import Workstation2
 from workstations.workstation3 import Workstation3
+from notifier import Notifier
 
 # The main method of the program, responsible for setting up and running the simulation
 if __name__ == '__main__':
@@ -16,12 +17,25 @@ if __name__ == '__main__':
     # Create the simulation environment
     simulation_env = simpy.Environment()
 
+    # Event to be triggered for Inspector 1
+    # create an empty list to hold the events
+    event_list = []
+    event_index = [0]
+
+    # create 10 events and append them to the list
+    for i in range(10):
+      event_list.append(simpy.events.Event(simulation_env))
+
+    resource = simpy.Resource(simulation_env, capacity=1)
+
+    notifier = Notifier()
+
     # Create instances of the inspector and workstation classes
-    inspector_1 = Inspector1(simulation_env)
+    inspector_1 = Inspector1(simulation_env, event_list, event_index)
     inspector_2 = Inspector2(simulation_env)
-    workstation_1 = Workstation1(simulation_env)
-    workstation_2 = Workstation2(simulation_env)
-    workstation_3 = Workstation3(simulation_env)
+    workstation_1 = Workstation1(simulation_env, event_list, event_index, resource, notifier)
+    workstation_2 = Workstation2(simulation_env, event_list, event_index, resource, notifier)
+    workstation_3 = Workstation3(simulation_env, event_list, event_index, resource, notifier)
 
     # Start the inspector processes
     inspector_1.start_process(workstation_1, workstation_2, workstation_3)
@@ -41,12 +55,12 @@ if __name__ == '__main__':
           '\n====================\n')
     # Print the execution times for each inspector and workstation
     print(f'Execution times\n'
-          f'Inspector 1 {inspector_1.service_times} \n'
-          f'Inspector 22 {inspector_2.service_times22} \n'
-          f'Inspector 23 {inspector_2.service_times23} \n'
-          f'Workstation 1 {workstation_1.service_times} \n'
-          f'Workstation 2 {workstation_2.service_times} \n'
-          f'Workstation 3 {workstation_3.service_times}')
+          f'Inspector 1 {inspector_1.service_times} \n\n'
+          f'Inspector 22 {inspector_2.service_times22} \n\n'
+          f'Inspector 23 {inspector_2.service_times23} \n\n'
+          f'Workstation 1 {workstation_1.service_times} \n\n'
+          f'Workstation 2 {workstation_2.service_times} \n\n'
+          f'Workstation 3 {workstation_3.service_times} \n\n')
     # Print the average service time for each inspector and workstation
     print(f'\nAverage service times:\n'
           f'Inspector 1 - {find_list_mean(inspector_1.service_times)}, '

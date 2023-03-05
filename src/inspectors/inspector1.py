@@ -3,9 +3,11 @@ from helper_functions import exponential_dist
 
 class Inspector1(object):
 
-    def __init__(self, env):
+    def __init__(self, env, event_list, event_index):
         self.env = env
         self.service_times = []
+        self.event_list = event_list
+        self.event_index = event_index
         
     def run(self, workstation_1, workstation_2, workstation_3):
         print('\***** Inspector 1 Running *****/')
@@ -17,7 +19,19 @@ class Inspector1(object):
             c1_lst = [workstation_1.c1_buffer, workstation_2.c1_buffer,
                   workstation_3.c1_buffer]
             # Find the buffer with the least number of type 1 components
-            selected_buffer = min(c1_lst, key=attrgetter('level'))
+            # Check to see if all buffers are max capacity
+            if (workstation_1.c1_buffer.level == 2 and workstation_2.c1_buffer.level == 2 and workstation_3.c1_buffer.level == 2): 
+                print("/********************************** ALL BUFFERS FULL, INSPECTOR 1 WAITING FOR NEXT AVAILABLE C1 BUFFER ****************************/")
+                workstation_available = yield self.event_list[self.event_index[0]]
+                print("/********************************** INSPECTOR 1 FINISHED WAITING, CHOSE " + workstation_available + " ****************************/")
+                if (workstation_available == "workstation_1"):
+                    selected_buffer = workstation_1.c1_buffer
+                elif (workstation_available == "workstation_2"):
+                    selected_buffer = workstation_2.c1_buffer
+                elif (workstation_available == "workstation_3"):
+                    selected_buffer = workstation_3.c1_buffer
+            else:
+                selected_buffer = min(c1_lst, key=attrgetter('level'))
             # Wait for the service time
             yield self.env.timeout(service_time)
             # Add type 1 component to the selected container
