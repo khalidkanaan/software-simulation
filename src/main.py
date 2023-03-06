@@ -17,25 +17,14 @@ if __name__ == '__main__':
     # Create the simulation environment
     simulation_env = simpy.Environment()
 
-    # Event to be triggered for Inspector 1
-    # create an empty list to hold the events
-    event_list = []
-    event_index = [0]
-
-    # create 10 events and append them to the list
-    for i in range(10):
-      event_list.append(simpy.events.Event(simulation_env))
-
-    resource = simpy.Resource(simulation_env, capacity=1)
-
-    notifier = Notifier()
+    notifier = Notifier(simulation_env)
 
     # Create instances of the inspector and workstation classes
-    inspector_1 = Inspector1(simulation_env, event_list, event_index)
+    inspector_1 = Inspector1(simulation_env, notifier)
     inspector_2 = Inspector2(simulation_env)
-    workstation_1 = Workstation1(simulation_env, event_list, event_index, resource, notifier)
-    workstation_2 = Workstation2(simulation_env, event_list, event_index, resource, notifier)
-    workstation_3 = Workstation3(simulation_env, event_list, event_index, resource, notifier)
+    workstation_1 = Workstation1(simulation_env, notifier)
+    workstation_2 = Workstation2(simulation_env, notifier)
+    workstation_3 = Workstation3(simulation_env, notifier)
 
     # Start the inspector processes
     inspector_1.start_process(workstation_1, workstation_2, workstation_3)

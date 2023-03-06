@@ -3,7 +3,7 @@ from helper_functions import exponential_dist
 
 class Workstation2(object):
 
-    def __init__(self, env, event_list, event_index, resource, notifier):
+    def __init__(self, env, notifier):
         # Define the environment where this workstation runs
         self.env = env
         # Counter to keep track of the number of products assembled
@@ -14,31 +14,25 @@ class Workstation2(object):
         self.c1_buffer = container.Container(self.env, 2)
         # Component 2 buffer with a capacity of 2
         self.c2_buffer = container.Container(self.env, 2)
-        # Workstation 2 event
-        self.event_list = event_list
-        self.event_index = event_index
-        self.resource = resource
+        # Notifier
         self.notifier = notifier
 
     def run(self):
         # Start message
         print('\***** Workstation 2 Running *****/')
         while True:
+            
             if (self.c1_buffer.level == 2):
                 self.notifier.w2_full = True
                 print("W2 BUFFER IS FULL OF C1")
-            elif (self.notifier.all_workstations_full() and self.c1_buffer.level < self.c1_buffer.capacity):
-                self.notifier.w2_full = False
-                self.event_list[self.event_index[0]].succeed("workstation_2")
-                request = self.resource.request()
-                yield request
-                self.event_index[0] += 1
-                print(f"W2 incremented event index to {self.event_index[0]}")
-                yield self.env.timeout(1)
-                self.resource.release(request)
 
             # Wait until both components are available
             yield self.c1_buffer.get(1) & self.c2_buffer.get(1)
+
+            if (self.notifier.all_workstations_full() and self.c1_buffer.level < self.c1_buffer.capacity):
+                self.notifier.w2_full = False
+                self.notifier.maybe_unblock_inspector("workstation_2")
+
             # Generate service time using exponential distribution
             service_time = exponential_dist(open('data/ws2.dat').read().splitlines())
             # Add the service time to the list of service times
