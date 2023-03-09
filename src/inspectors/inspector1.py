@@ -32,19 +32,6 @@ class Inspector1(object):
                 elif (workstation_available == "workstation_3"):
                     selected_buffer = workstation_3.c1_buffer
 
-            # if (workstation_1.c1_buffer.level == 2 and workstation_2.c1_buffer.level == 2 and workstation_3.c1_buffer.level == 2): 
-            #     print("/********************************** ALL BUFFERS FULL, INSPECTOR 1 WAITING FOR NEXT AVAILABLE C1 BUFFER ****************************/")
-            #     workstation_available = yield self.event_list[self.event_index[0]]
-            #     print("/********************************** INSPECTOR 1 FINISHED WAITING, CHOSE " + workstation_available + " ****************************/")
-            #     if (workstation_available == "workstation_1"):
-            #         selected_buffer = workstation_1.c1_buffer
-            #     elif (workstation_available == "workstation_2"):
-            #         selected_buffer = workstation_2.c1_buffer
-            #     elif (workstation_available == "workstation_3"):
-            #         selected_buffer = workstation_3.c1_buffer
-            # else:
-            #     selected_buffer = min(c1_lst, key=attrgetter('level'))
-
             # Wait for the service time
             yield self.env.timeout(service_time)
             # Add type 1 component to the selected container
