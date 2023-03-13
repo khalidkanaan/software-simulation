@@ -7,6 +7,7 @@ from workstations.workstation1 import Workstation1
 from workstations.workstation2 import Workstation2
 from workstations.workstation3 import Workstation3
 from notifier import Notifier
+import CLCG
 
 # The main method of the program, responsible for setting up and running the simulation
 if __name__ == '__main__':
@@ -18,6 +19,15 @@ if __name__ == '__main__':
     simulation_env = simpy.Environment()
 
     notifier = Notifier(simulation_env)
+
+    # Generating service times for Inspector1, Inspector2, Workstation1, Workstation2, Workstation3 using CLCG
+    clcg = CLCG.CLCG(seed=17)
+    service_times = clcg.generate_service_times('data/servinsp1.dat', num_samples=300, output_file='new_data/generated_servinsp1.dat')
+    service_times = clcg.generate_service_times('data/servinsp22.dat', num_samples=300, output_file='new_data/generated_servinsp22.dat')
+    service_times = clcg.generate_service_times('data/servinsp23.dat', num_samples=300, output_file='new_data/generated_servinsp23.dat')
+    service_times = clcg.generate_service_times('data/ws1.dat', num_samples=300, output_file='new_data/generated_ws1.dat')
+    service_times = clcg.generate_service_times('data/ws2.dat', num_samples=300, output_file='new_data/generated_ws2.dat')
+    service_times = clcg.generate_service_times('data/ws3.dat', num_samples=300, output_file='new_data/generated_ws3.dat')
 
     # Create instances of the inspector and workstation classes
     inspector_1 = Inspector1(simulation_env, notifier)

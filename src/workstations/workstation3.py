@@ -1,5 +1,4 @@
 from simpy.resources import container
-from helper_functions import exponential_dist
 
 class Workstation3(object):
 
@@ -18,6 +17,8 @@ class Workstation3(object):
 
     def run(self):
         print('\***** Workstation 3 Running *****/')
+        all_service_times = list(map(float, open('new_data/generated_ws3.dat', 'r').read().splitlines()))
+        count = 0
         while True:
 
             if (self.c1_buffer.level == 2):
@@ -32,13 +33,15 @@ class Workstation3(object):
                 self.notifier.maybe_unblock_inspector("workstation_3")
 
             # Generate service time using exponential distribution
-            service_time = exponential_dist(open('data/ws3.dat').read().splitlines())
+            service_time = all_service_times[count]
             self.service_times.append(service_time)
             # Wait for the duration of the service time
             yield self.env.timeout(service_time)
             # Increment product 3 assembled counter
             self.p3 += 1
             print('\***** Assembled: Product 3 *****/')
+
+            count += 1
     
     def start_process(self):
         # Start the run process as a SimPy process
