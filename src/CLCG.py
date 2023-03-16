@@ -1,37 +1,38 @@
 import numpy as np
+from LCG import LCG
 
 class CLCG:
-    def __init__(self, seed=None):
-        self.m = 2**32
-        self.a = np.array([1664525, 22695477, 524287, 470745, 17489])
-        self.c = np.array([1013904223, 1662033893, 907633385, 1500450271, 351230859])
-        self.q = len(self.a)
-        self.x = np.zeros(self.q, dtype=np.uint32)
-        self.service_times = None
-        if seed is not None:
-            self.set_seed(seed)
+    def __init__(self, file_path, num_service_times, seeds, params):
+        self.service_times = self._read_service_times(file_path)
+        self.mean = np.mean(self.service_times)
+        self.std_dev = np.std(self.service_times)
+        self.num_service_times = num_service_times
+        
+        self.generators = []
+        for seed, (a, c, m) in zip(seeds, params):
+            generator = LCG(seed, a, c, m)
+            self.generators.append(generator)
 
-    def set_seed(self, seed):
-        self.x[0] = seed
-        for i in range(1, self.q):
-            self.x[i] = (self.a[i-1]*self.x[i-1] + self.c[i-1]) % self.m
-
-    def rand(self):
-        xnew = (np.sum(self.a * self.x) + self.c) % self.m
-        self.x[:-1] = self.x[1:]
-        self.x[-1] = xnew
-        return xnew / self.m
-
-    
-    def generate_service_times(self, file_path, num_samples, seed=None, output_file=None):
-        if seed is not None:
-            self.set_seed(seed)
+    def _read_service_times(self, file_path):
         with open(file_path, 'r') as f:
-            service_times = np.loadtxt(f)
-        service_times = np.random.permutation(service_times)[:num_samples]
-        self.service_times = service_times
-        if output_file is not None:
-            with open(output_file, 'w') as f:
-                np.savetxt(f, service_times, fmt='%.3f')
-        return service_times
+            data = [float(line.strip()) for line in f.readlines()]
+        return data
 
+    def next(self):
+        values = []
+        for generator in self.generators:
+            values.append(generator.next())
+        
+        new_value = (values[0] - values[1]) % (self.generators[0].m - 1)
+        
+        if new_value > 0:
+            new_value = new_value/self.generators[0].m
+        elif new_value == 0:
+            new_value = (self.generators[0].m-1)/self.generators[0].m
+    
+        # combined = sum(generator.next() for generator in self.generators) / len(self.generators)
+        return new_value # combined * self.std_dev + self.mean
+
+    def reset(self):
+        for generator in self.generators:
+            generator.reset()
