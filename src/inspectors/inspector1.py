@@ -12,7 +12,6 @@ class Inspector1(object):
         rv_service_times = list(map(float, open('new_data/generated_servinsp1.dat', 'r').read().splitlines()))
         count = 0
         while True:
-            # Generate service time using exponential distribution
             service_time = rv_service_times[count]
             self.service_times.append(service_time)
             # Get list of all buffers with type 1 components
