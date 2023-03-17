@@ -1,5 +1,4 @@
 from operator import attrgetter
-from helper_functions import exponential_dist
 
 class Inspector1(object):
 
@@ -10,9 +9,11 @@ class Inspector1(object):
         
     def run(self, workstation_1, workstation_2, workstation_3):
         print('\***** Inspector 1 Running *****/')
+        all_service_times = list(map(float, open('new_data/generated_servinsp1.dat', 'r').read().splitlines()))
+        count = 0
         while True:
             # Generate service time using exponential distribution
-            service_time = exponential_dist(open('data/servinsp1.dat').read().splitlines())  
+            service_time = all_service_times[count]
             self.service_times.append(service_time)
             # Get list of all buffers with type 1 components
             c1_lst = [workstation_1.c1_buffer, workstation_2.c1_buffer,
@@ -43,6 +44,8 @@ class Inspector1(object):
                 print('\***** Transfered C1 to W2 *****/')
             elif selected_buffer is workstation_3.c1_buffer:
                 print('\***** Transfered C1 to W3 *****/')
+            
+            count += 1
 
     def start_process(self, workstation_1, workstation_2, workstation_3):
         # Start the run function as a SimPy process

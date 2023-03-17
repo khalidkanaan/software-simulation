@@ -1,5 +1,4 @@
 from simpy.resources import container
-from helper_functions import exponential_dist
 
 class Workstation2(object):
 
@@ -20,6 +19,8 @@ class Workstation2(object):
     def run(self):
         # Start message
         print('\***** Workstation 2 Running *****/')
+        all_service_time = list(map(float, open('new_data/generated_ws2.dat', 'r').read().splitlines()))
+        count = 0
         while True:
             
             if (self.c1_buffer.level == 2):
@@ -34,7 +35,7 @@ class Workstation2(object):
                 self.notifier.maybe_unblock_inspector("workstation_2")
 
             # Generate service time using exponential distribution
-            service_time = exponential_dist(open('data/ws2.dat').read().splitlines())
+            service_time = all_service_time[count]
             # Add the service time to the list of service times
             self.service_times.append(service_time)
             # Wait for the specified service time
@@ -43,6 +44,8 @@ class Workstation2(object):
             self.p2 += 1
             # Assembly complete message
             print('\***** Assembled: Product 2 *****/')
+
+            count += 1
 
     def start_process(self):
         # Start the workstation's process
