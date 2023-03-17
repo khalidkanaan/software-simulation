@@ -19,7 +19,7 @@ class Workstation2(object):
     def run(self):
         # Start message
         print('\***** Workstation 2 Running *****/')
-        all_service_time = list(map(float, open('new_data/generated_ws2.dat', 'r').read().splitlines()))
+        rv_service_times = list(map(float, open('new_data/generated_ws2.dat', 'r').read().splitlines()))
         count = 0
         while True:
             
@@ -35,7 +35,7 @@ class Workstation2(object):
                 self.notifier.maybe_unblock_inspector("workstation_2")
 
             # Generate service time using exponential distribution
-            service_time = all_service_time[count]
+            service_time = rv_service_times[count]
             # Add the service time to the list of service times
             self.service_times.append(service_time)
             # Wait for the specified service time

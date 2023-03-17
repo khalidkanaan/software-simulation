@@ -9,11 +9,11 @@ class Inspector1(object):
         
     def run(self, workstation_1, workstation_2, workstation_3):
         print('\***** Inspector 1 Running *****/')
-        all_service_times = list(map(float, open('new_data/generated_servinsp1.dat', 'r').read().splitlines()))
+        rv_service_times = list(map(float, open('new_data/generated_servinsp1.dat', 'r').read().splitlines()))
         count = 0
         while True:
             # Generate service time using exponential distribution
-            service_time = all_service_times[count]
+            service_time = rv_service_times[count]
             self.service_times.append(service_time)
             # Get list of all buffers with type 1 components
             c1_lst = [workstation_1.c1_buffer, workstation_2.c1_buffer,
