@@ -33,6 +33,8 @@ class Workstation1(object):
                 self.notifier.w1_full = True
                 print("W1 BUFFER IS FULL OF C1")
 
+            # self.c1_buffer_occupancies.append(self.c1_buffer.level)
+
             # Wait for component 1 to become available
             yield self.c1_buffer.get(1)
 

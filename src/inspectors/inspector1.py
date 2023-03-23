@@ -56,12 +56,12 @@ class Inspector1(object):
             # start_time_blocked = time.time()
             start_time_blocked = self.env.now
 
-            if (workstation_chosen == 1):
-                workstation_1.c1_buffer_occupancies.append(workstation_1.c1_buffer.level)
-            elif (workstation_chosen == 2):
-                workstation_2.c1_buffer_occupancies.append(workstation_2.c1_buffer.level)
-            elif (workstation_chosen == 3):
-                workstation_3.c1_buffer_occupancies.append(workstation_3.c1_buffer.level)
+            # if (workstation_chosen == 1):
+            #     workstation_1.c1_buffer_occupancies.append(workstation_1.c1_buffer.level)
+            # elif (workstation_chosen == 2):
+            #     workstation_2.c1_buffer_occupancies.append(workstation_2.c1_buffer.level)
+            # elif (workstation_chosen == 3):
+            #     workstation_3.c1_buffer_occupancies.append(workstation_3.c1_buffer.level)
 
             # Add type 1 component to the selected container
             yield selected_buffer.put(1)

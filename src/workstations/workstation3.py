@@ -36,6 +36,9 @@ class Workstation3(object):
                 self.notifier.w3_full = True
                 print("W3 BUFFER IS FULL OF C1")
 
+            # self.c1_buffer_occupancies.append(self.c1_buffer.level)
+            # self.c3_buffer_occupancies.append(self.c3_buffer.level)
+
             # Yields until components 1 and 3 are available
             yield self.c1_buffer.get(1) & self.c3_buffer.get(1)
 
