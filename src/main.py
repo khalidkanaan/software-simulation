@@ -8,6 +8,8 @@ from workstations.workstation2 import Workstation2
 from workstations.workstation3 import Workstation3
 from notifier import Notifier
 from RVG import RVG
+from component_tracker import ComponentTracker
+
 # The main method of the program, responsible for setting up and running the simulation
 if __name__ == '__main__':
     # Define the runtime of the simulation in seconds
@@ -28,12 +30,23 @@ if __name__ == '__main__':
     random_ws2 = RVG('data/ws2.dat', 300, 'new_data/generated_ws2.dat').generate_service_times()
     random_ws3 = RVG('data/ws3.dat', 300, 'new_data/generated_ws3.dat').generate_service_times()
 
+    # Component Trackers
+    w1_c1_tracker = ComponentTracker()
+    w2_c1_tracker = ComponentTracker()
+    w2_c2_tracker = ComponentTracker()
+    w3_c1_tracker = ComponentTracker()
+    w3_c3_tracker = ComponentTracker()
+
+    # Mutexes
+    mutex = simpy.Resource(simulation_env, capacity=1)
+    
+
     # Create instances of the inspector and workstation classes
-    inspector_1 = Inspector1(simulation_env, notifier)
-    inspector_2 = Inspector2(simulation_env)
-    workstation_1 = Workstation1(simulation_env, notifier)
-    workstation_2 = Workstation2(simulation_env, notifier)
-    workstation_3 = Workstation3(simulation_env, notifier)
+    inspector_1 = Inspector1(simulation_env, notifier, w1_c1_tracker, w2_c1_tracker, w3_c1_tracker)
+    inspector_2 = Inspector2(simulation_env, w2_c2_tracker, w3_c3_tracker)
+    workstation_1 = Workstation1(simulation_env, notifier, w1_c1_tracker)
+    workstation_2 = Workstation2(simulation_env, notifier, w2_c1_tracker, w2_c2_tracker)
+    workstation_3 = Workstation3(simulation_env, notifier, w3_c1_tracker, w3_c3_tracker)
 
     # Start the inspector processes
     inspector_1.start_process(workstation_1, workstation_2, workstation_3)

@@ -3,11 +3,14 @@ import time
 
 class Inspector2(object):
 
-    def __init__(self, env):
+    def __init__(self, env, w2_c2_tracker, w3_c3_tracker):
         self.env = env
         self.service_times22 = []
         self.service_times23 = []
         self.blocked_time = 0
+        self.w2_c2_tracker = w2_c2_tracker
+        self.w3_c3_tracker = w3_c3_tracker
+
         
     def run(self, workstation_2, workstation_3):
         print('\***** Inspector 2 Running *****/')
