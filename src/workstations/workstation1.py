@@ -3,7 +3,7 @@ import time
 
 class Workstation1(object):
 
-    def __init__(self, env, notifier, w1_c1_tracker):
+    def __init__(self, env, notifier, w1_c1_tracker, w1_c1_mutex):
         self.env = env
         # Keeps track of the number of products assembled
         self.p1 = 0 
@@ -18,6 +18,7 @@ class Workstation1(object):
         # List of buffer occupancies
         self.c1_buffer_occupancies = []
         self.w1_c1_tracker = w1_c1_tracker
+        self.w1_c1_mutex = w1_c1_mutex
 
 
     def run(self):
@@ -39,13 +40,15 @@ class Workstation1(object):
             # Wait for component 1 to become available
             yield self.c1_buffer.get(1)
 
-            if (self.w1_c1_tracker.isLatestComponent):
-                self.w1_c1_tracker.end_time = self.env.now
-                self.w1_c1_tracker.add_time()
-            else:
-                self.w1_c1_tracker.isLatestComponent = True
-
             self.c1_buffer_occupancies.append(self.c1_buffer.level)
+
+            with self.w1_c1_mutex.request() as req:
+                yield req
+                if (self.w1_c1_tracker.isLatestComponent):
+                    self.w1_c1_tracker.end_time = self.env.now
+                    self.w1_c1_tracker.add_time_spent_in_buffer()
+                else:
+                    self.w1_c1_tracker.isLatestComponent = True
 
             if (self.notifier.all_workstations_full() and self.c1_buffer.level < self.c1_buffer.capacity):
                 self.notifier.w1_full = False

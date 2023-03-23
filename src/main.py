@@ -38,15 +38,19 @@ if __name__ == '__main__':
     w3_c3_tracker = ComponentTracker()
 
     # Mutexes
-    mutex = simpy.Resource(simulation_env, capacity=1)
-    
+    w1_c1_mutex = simpy.Resource(simulation_env, capacity=1)
+    w2_c1_mutex = simpy.Resource(simulation_env, capacity=1)
+    w2_c2_mutex = simpy.Resource(simulation_env, capacity=1)
+    w3_c1_mutex = simpy.Resource(simulation_env, capacity=1)
+    w3_c3_mutex = simpy.Resource(simulation_env, capacity=1)
+
 
     # Create instances of the inspector and workstation classes
-    inspector_1 = Inspector1(simulation_env, notifier, w1_c1_tracker, w2_c1_tracker, w3_c1_tracker)
-    inspector_2 = Inspector2(simulation_env, w2_c2_tracker, w3_c3_tracker)
-    workstation_1 = Workstation1(simulation_env, notifier, w1_c1_tracker)
-    workstation_2 = Workstation2(simulation_env, notifier, w2_c1_tracker, w2_c2_tracker)
-    workstation_3 = Workstation3(simulation_env, notifier, w3_c1_tracker, w3_c3_tracker)
+    inspector_1 = Inspector1(simulation_env, notifier, w1_c1_tracker, w2_c1_tracker, w3_c1_tracker, w1_c1_mutex, w2_c1_mutex, w3_c1_mutex)
+    inspector_2 = Inspector2(simulation_env, w2_c2_tracker, w3_c3_tracker, w2_c2_mutex, w3_c3_mutex)
+    workstation_1 = Workstation1(simulation_env, notifier, w1_c1_tracker, w1_c1_mutex)
+    workstation_2 = Workstation2(simulation_env, notifier, w2_c1_tracker, w2_c2_tracker, w2_c1_mutex, w2_c2_mutex)
+    workstation_3 = Workstation3(simulation_env, notifier, w3_c1_tracker, w3_c3_tracker, w3_c1_mutex, w3_c3_mutex)
 
     # Start the inspector processes
     inspector_1.start_process(workstation_1, workstation_2, workstation_3)
@@ -97,5 +101,10 @@ if __name__ == '__main__':
           f'Workstation 2 C1 Avg Buffer Occupancy - {sum(workstation_2.c1_buffer_occupancies) / len(workstation_2.c1_buffer_occupancies)} \n'
           f'Workstation 3 C1 Avg Buffer Occupancy - {sum(workstation_3.c1_buffer_occupancies) / len(workstation_3.c1_buffer_occupancies)} \n'
           f'Workstation 2 C2 Avg Buffer Occupancy - {sum(workstation_2.c2_buffer_occupancies) / len(workstation_2.c2_buffer_occupancies)} \n'
-          f'Workstation 3 C3 Avg Buffer Occupancy - {sum(workstation_3.c3_buffer_occupancies) / len(workstation_3.c3_buffer_occupancies)} \n')
+          f'Workstation 3 C3 Avg Buffer Occupancy - {sum(workstation_3.c3_buffer_occupancies) / len(workstation_3.c3_buffer_occupancies)} \n\n'
+          f'Workstation 1 C1 Avg Time In Buffer - {sum(w1_c1_tracker.total_times) / len(w1_c1_tracker.total_times)} \n'
+          f'Workstation 2 C1 Avg Time In Buffer - {sum(w2_c1_tracker.total_times) / len(w2_c1_tracker.total_times)} \n'
+          f'Workstation 2 C2 Avg Time In Buffer - {sum(w2_c2_tracker.total_times) / len(w2_c2_tracker.total_times)} \n'
+          f'Workstation 3 C1 Avg Time In Buffer - {sum(w3_c1_tracker.total_times) / len(w3_c1_tracker.total_times)} \n'
+          f'Workstation 3 C3 Avg Time In Buffer - {sum(w3_c3_tracker.total_times) / len(w3_c3_tracker.total_times)} \n')
 

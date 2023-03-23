@@ -3,7 +3,7 @@ import time
 
 class Workstation2(object):
 
-    def __init__(self, env, notifier):
+    def __init__(self, env, notifier, w2_c1_tracker, w2_c2_tracker, w2_c1_mutex, w2_c2_mutex):
         # Define the environment where this workstation runs
         self.env = env
         # Counter to keep track of the number of products assembled
@@ -22,6 +22,10 @@ class Workstation2(object):
         self.c1_buffer_occupancies = []
         # List of c2 buffer occupancies
         self.c2_buffer_occupancies = []
+        self.w2_c1_tracker = w2_c1_tracker
+        self.w2_c2_tracker = w2_c2_tracker
+        self.w2_c1_mutex = w2_c1_mutex
+        self.w2_c2_mutex = w2_c2_mutex
 
     def run(self):
         # Start message
@@ -45,6 +49,25 @@ class Workstation2(object):
 
             self.c1_buffer_occupancies.append(self.c1_buffer.level)
             self.c2_buffer_occupancies.append(self.c2_buffer.level)
+
+            with self.w2_c1_mutex.request() as req1, self.w2_c2_mutex.request() as req2:
+                yield req1 & req2
+                if (self.w2_c1_tracker.isLatestComponent and self.w2_c2_tracker.isLatestComponent):
+                    self.w2_c1_tracker.end_time = self.env.now
+                    self.w2_c1_tracker.add_time_spent_in_buffer()
+                    self.w2_c2_tracker.end_time = self.env.now
+                    self.w2_c2_tracker.add_time_spent_in_buffer()
+                elif (self.w2_c1_tracker.isLatestComponent and not self.w2_c2_tracker.isLatestComponent):
+                    self.w2_c1_tracker.end_time = self.env.now
+                    self.w2_c1_tracker.add_time_spent_in_buffer()
+                    self.w2_c2_tracker.isLatestComponent = True
+                elif (not self.w2_c1_tracker.isLatestComponent and self.w2_c2_tracker.isLatestComponent):
+                    self.w2_c2_tracker.end_time = self.env.now
+                    self.w2_c2_tracker.add_time_spent_in_buffer()
+                    self.w2_c1_tracker.isLatestComponent = True
+                else:
+                    self.w2_c1_tracker.isLatestComponent = True
+                    self.w2_c2_tracker.isLatestComponent = True
 
             if (self.notifier.all_workstations_full() and self.c1_buffer.level < self.c1_buffer.capacity):
                 self.notifier.w2_full = False

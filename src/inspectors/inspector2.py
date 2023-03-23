@@ -3,13 +3,15 @@ import time
 
 class Inspector2(object):
 
-    def __init__(self, env, w2_c2_tracker, w3_c3_tracker):
+    def __init__(self, env, w2_c2_tracker, w3_c3_tracker, w2_c2_mutex, w3_c3_mutex):
         self.env = env
         self.service_times22 = []
         self.service_times23 = []
         self.blocked_time = 0
         self.w2_c2_tracker = w2_c2_tracker
         self.w3_c3_tracker = w3_c3_tracker
+        self.w2_c2_mutex = w2_c2_mutex
+        self.w3_c3_mutex = w3_c3_mutex
 
         
     def run(self, workstation_2, workstation_3):
@@ -37,6 +39,14 @@ class Inspector2(object):
                 yield workstation_2.c2_buffer.put(1)
 
                 workstation_2.c2_buffer_occupancies.append(workstation_2.c2_buffer.level)
+
+                with self.w2_c2_mutex.request() as req:
+                    yield req
+                    self.w2_c2_tracker.start_time = self.env.now
+                    if (workstation_2.c2_buffer.level == 1):
+                        self.w2_c2_tracker.isLatestComponent = False
+                    else:
+                        self.w2_c2_tracker.isLatestComponent = True
                 
                 # Add the time Inspector2 spent blocked
                 # self.blocked_time += (time.time() - start_time_blocked)
@@ -61,6 +71,14 @@ class Inspector2(object):
                 yield workstation_3.c3_buffer.put(1)
 
                 workstation_3.c3_buffer_occupancies.append(workstation_3.c3_buffer.level)
+
+                with self.w3_c3_mutex.request() as req:
+                    yield req
+                    self.w3_c3_tracker.start_time = self.env.now
+                    if (workstation_3.c3_buffer.level == 1):
+                        self.w3_c3_tracker.isLatestComponent = False
+                    else:
+                        self.w3_c3_tracker.isLatestComponent = True
 
                 # Add the time Inspector2 spent blocked
                 # self.blocked_time += (time.time() - start_time_blocked)
