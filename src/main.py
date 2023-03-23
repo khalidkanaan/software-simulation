@@ -52,7 +52,7 @@ if __name__ == '__main__':
           ' Simulation results' +
           '\n====================\n')
     # Print the execution times for each inspector and workstation
-    print(f'Execution times\n'
+    print(f'Execution times:\n'
           f'Inspector 1 {inspector_1.service_times} \n\n'
           f'Inspector 22 {inspector_2.service_times22} \n\n'
           f'Inspector 23 {inspector_2.service_times23} \n\n'
@@ -70,4 +70,19 @@ if __name__ == '__main__':
           f'Total execution time: {RUNTIME}\n'
           f'\nProducts produced:\n'
           f'{workstation_1.p1} of product 1, {workstation_2.p2} of product 2, {workstation_3.p3} of product 3\n')
+    
+    print(f'Heuristics:\n'
+          f'Inspector 1 Blocked Time (as fraction of total simulation time) - {inspector_1.blocked_time / RUNTIME} \n'
+          f'Inspector 2 Blocked Time (as fraction of total simulation time) - {inspector_2.blocked_time / RUNTIME} \n\n'
+          f'Workstation 1 Idle Time (as fraction of total simulation time) - {workstation_1.idle_time / RUNTIME} \n'
+          f'Workstation 2 Idle Time (as fraction of total simulation time) - {workstation_2.idle_time / RUNTIME} \n'
+          f'Workstation 3 Idle Time (as fraction of total simulation time) - {workstation_3.idle_time / RUNTIME} \n\n'
+          f'Product 1 Throughput (# of Product 1 per second) - {workstation_1.p1 / RUNTIME} \n'
+          f'Product 2 Throughput (# of Product 2 per second) - {workstation_2.p2 / RUNTIME} \n'
+          f'Product 3 Throughput (# of Product 3 per second) - {workstation_3.p3 / RUNTIME} \n\n'
+          f'Workstation 1 C1 Avg Buffer Occupancy - {sum(workstation_1.c1_buffer_occupancies) / len(workstation_1.c1_buffer_occupancies)} \n'
+          f'Workstation 2 C1 Avg Buffer Occupancy - {sum(workstation_2.c1_buffer_occupancies) / len(workstation_2.c1_buffer_occupancies)} \n'
+          f'Workstation 3 C1 Avg Buffer Occupancy - {sum(workstation_3.c1_buffer_occupancies) / len(workstation_3.c1_buffer_occupancies)} \n'
+          f'Workstation 2 C2 Avg Buffer Occupancy - {sum(workstation_2.c2_buffer_occupancies) / len(workstation_2.c2_buffer_occupancies)} \n'
+          f'Workstation 3 C3 Avg Buffer Occupancy - {sum(workstation_3.c3_buffer_occupancies) / len(workstation_3.c3_buffer_occupancies)} \n')
 

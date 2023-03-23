@@ -1,4 +1,5 @@
 from simpy.resources import container
+import time
 
 class Workstation1(object):
 
@@ -12,12 +13,21 @@ class Workstation1(object):
         self.c1_buffer = container.Container(self.env, 2)
         # Notifier
         self.notifier = notifier
+        # Time spent idle
+        self.idle_time = 0
+        # List of buffer occupancies
+        self.c1_buffer_occupancies = []
+
 
     def run(self):
         print('\***** Workstation 1 Running *****/')
         rv_service_times = list(map(float, open('new_data/generated_ws1.dat', 'r').read().splitlines()))
         count = 0
         while True:
+
+            # Start time of idle
+            # start_idle_time = time.time()
+            start_idle_time = self.env.now
 
             if (self.c1_buffer.level == 2):
                 self.notifier.w1_full = True
@@ -26,6 +36,8 @@ class Workstation1(object):
             # Wait for component 1 to become available
             yield self.c1_buffer.get(1)
 
+            self.c1_buffer_occupancies.append(self.c1_buffer.level)
+
             if (self.notifier.all_workstations_full() and self.c1_buffer.level < self.c1_buffer.capacity):
                 self.notifier.w1_full = False
                 self.notifier.maybe_unblock_inspector("workstation_1")
@@ -33,12 +45,19 @@ class Workstation1(object):
             # Generate service time using exponential distribution
             service_time = rv_service_times[count]
             self.service_times.append(service_time)
+
+            # Add the time spent idle
+            # self.idle_time += (time.time() - start_idle_time)
+            self.idle_time += (self.env.now - start_idle_time)
+
             # Wait for assembly process to complete
             yield self.env.timeout(service_time)
+
             # Increase count of products assembled
             self.p1 +=1
-            print('\***** Assembled: Product 1 *****/')
 
+            # Assembly complete message
+            print('\***** Assembled: Product 1 *****/')
             count += 1
     
     def start_process(self):
