@@ -28,7 +28,7 @@ class Workstation3(object):
 
     def run(self):
         print('\***** Workstation 3 Running *****/')
-        rv_service_times = list(map(float, open('new_data/generated_ws3.dat', 'r').read().splitlines()))
+        rv_service_times = list(map(float, open('data/ws3.dat', 'r').read().splitlines()))
         count = 0
         while True:
 
@@ -39,9 +39,6 @@ class Workstation3(object):
             if (self.c1_buffer.level == 2):
                 self.notifier.w3_full = True
                 print("W3 BUFFER IS FULL OF C1")
-
-            # self.c1_buffer_occupancies.append(self.c1_buffer.level)
-            # self.c3_buffer_occupancies.append(self.c3_buffer.level)
 
             # Yields until components 1 and 3 are available
             yield self.c1_buffer.get(1) & self.c3_buffer.get(1)
@@ -77,7 +74,6 @@ class Workstation3(object):
             self.service_times.append(service_time)
 
             # Add the time spent idle
-            # self.idle_time += (time.time() - start_idle_time)
             self.idle_time += (self.env.now - start_idle_time)
 
             # Wait for assembly process to complete

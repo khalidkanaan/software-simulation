@@ -14,13 +14,13 @@ class Inspector1(object):
         self.w1_c1_mutex = w1_c1_mutex
         self.w2_c1_mutex = w2_c1_mutex
         self.w3_c1_mutex = w3_c1_mutex
+        self.count = 0
         
     def run(self, workstation_1, workstation_2, workstation_3):
         print('\***** Inspector 1 Running *****/')
-        rv_service_times = list(map(float, open('new_data/generated_servinsp1.dat', 'r').read().splitlines()))
-        count = 0
+        rv_service_times = list(map(float, open('data/servinsp1.dat', 'r').read().splitlines()))
         while True:
-            service_time = rv_service_times[count]
+            service_time = rv_service_times[self.count]
             self.service_times.append(service_time)
 
             # Get list of all buffers with type 1 components
@@ -33,7 +33,6 @@ class Inspector1(object):
                 workstation_chosen = c1_lst.index(selected_buffer) + 1
             else:
                 # Start time of Inspector1 being blocked
-                # start_time_blocked = time.time()
                 start_time_blocked = self.env.now
 
                 while self.notifier.all_workstations_full():
@@ -52,22 +51,13 @@ class Inspector1(object):
                     workstation_chosen = 3
 
                 # Add the time Inspector1 spent blocked
-                # self.blocked_time += (time.time() - start_time_blocked)
                 self.blocked_time += (self.env.now - start_time_blocked)
 
             # Wait for the service time
             yield self.env.timeout(service_time)
 
             # Start time of Inspector1 being blocked
-            # start_time_blocked = time.time()
             start_time_blocked = self.env.now
-
-            # if (workstation_chosen == 1):
-            #     workstation_1.c1_buffer_occupancies.append(workstation_1.c1_buffer.level)
-            # elif (workstation_chosen == 2):
-            #     workstation_2.c1_buffer_occupancies.append(workstation_2.c1_buffer.level)
-            # elif (workstation_chosen == 3):
-            #     workstation_3.c1_buffer_occupancies.append(workstation_3.c1_buffer.level)
 
             # Add type 1 component to the selected container
             yield selected_buffer.put(1)
@@ -101,7 +91,6 @@ class Inspector1(object):
                         self.w3_c1_tracker.isLatestComponent = True
 
             # Add the time Inspector1 spent blocked
-            # self.blocked_time += (time.time() - start_time_blocked)
             self.blocked_time += (self.env.now - start_time_blocked)
 
             # Print which workstation received the type 1 component
@@ -112,7 +101,7 @@ class Inspector1(object):
             elif selected_buffer is workstation_3.c1_buffer:
                 print('\***** Transfered C1 to W3 *****/')
             
-            count += 1
+            self.count += 1
 
     def start_process(self, workstation_1, workstation_2, workstation_3):
         # Start the run function as a SimPy process

@@ -85,6 +85,8 @@ if __name__ == '__main__':
           f'Workstation 2 - {find_list_mean(workstation_2.service_times)}, '
           f'Workstation 3 - {find_list_mean(workstation_3.service_times)}\n'
           f'Total execution time: {RUNTIME}\n'
+          f'\nComponents Inspected:\n'
+          f'{inspector_1.count} inspected of C1, {inspector_2.count22} inspected of C2, {inspector_2.count23} inspected of C3\n'
           f'\nProducts produced:\n'
           f'{workstation_1.p1} of product 1, {workstation_2.p2} of product 2, {workstation_3.p3} of product 3\n')
     
@@ -107,4 +109,3 @@ if __name__ == '__main__':
           f'Workstation 2 C2 Avg Time In Buffer - {sum(w2_c2_tracker.total_times) / len(w2_c2_tracker.total_times)} \n'
           f'Workstation 3 C1 Avg Time In Buffer - {sum(w3_c1_tracker.total_times) / len(w3_c1_tracker.total_times)} \n'
           f'Workstation 3 C3 Avg Time In Buffer - {sum(w3_c3_tracker.total_times) / len(w3_c3_tracker.total_times)} \n')
-

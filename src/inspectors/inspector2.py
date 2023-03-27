@@ -12,19 +12,19 @@ class Inspector2(object):
         self.w3_c3_tracker = w3_c3_tracker
         self.w2_c2_mutex = w2_c2_mutex
         self.w3_c3_mutex = w3_c3_mutex
+        self.count22 = 0
+        self.count23 = 0
 
         
     def run(self, workstation_2, workstation_3):
         print('\***** Inspector 2 Running *****/')
-        rv_service_times22 = list(map(float,  open('new_data/generated_servinsp22.dat', 'r').read().splitlines()))
-        rv_service_times23 = list(map(float, open('new_data/generated_servinsp23.dat', 'r').read().splitlines()))
-        count22 = 0
-        count23 = 0
+        rv_service_times22 = list(map(float,  open('data/servinsp22.dat', 'r').read().splitlines()))
+        rv_service_times23 = list(map(float, open('data/servinsp23.dat', 'r').read().splitlines()))
         while True:
             # Randomly decide which component to make
             if bool(random.getrandbits(1)):  
                 # Generate service time for component 2 using exponential distribution
-                service_time = rv_service_times22[count22]
+                service_time = rv_service_times22[self.count22]
                 self.service_times22.append(service_time)
                 # Wait for the service time
                 yield self.env.timeout(service_time)
@@ -53,10 +53,10 @@ class Inspector2(object):
                 self.blocked_time += (self.env.now - start_time_blocked)
 
                 print('\***** Transfered C2 to W2 *****/')
-                count22 += 1
+                self.count22 += 1
             else:
                 # Generate service time for component 3 using exponential distribution
-                service_time = rv_service_times23[count23]
+                service_time = rv_service_times23[self.count23]
                 self.service_times23.append(service_time)
                 # Wait for the service time
                 yield self.env.timeout(service_time)
@@ -85,7 +85,7 @@ class Inspector2(object):
                 self.blocked_time += (self.env.now - start_time_blocked)
 
                 print('\***** Transfered C3 to W3 *****/')
-                count23 += 1
+                self.count23 += 1
             
 
     def start_process(self, workstation_2, workstation_3):
