@@ -19,9 +19,9 @@ class Workstation2(object):
         # Time spent idle
         self.idle_time = 0
         # List of c1 buffer occupancies
-        self.c1_buffer_occupancies = []
+        self.c1_buffer_occupancies = dict()
         # List of c2 buffer occupancies
-        self.c2_buffer_occupancies = []
+        self.c2_buffer_occupancies = dict()
         self.w2_c1_tracker = w2_c1_tracker
         self.w2_c2_tracker = w2_c2_tracker
         self.w2_c1_mutex = w2_c1_mutex
@@ -43,8 +43,8 @@ class Workstation2(object):
             # Wait until both components are available
             yield self.c1_buffer.get(1) & self.c2_buffer.get(1)
 
-            self.c1_buffer_occupancies.append(self.c1_buffer.level)
-            self.c2_buffer_occupancies.append(self.c2_buffer.level)
+            self.c1_buffer_occupancies.update({self.env.now : self.c1_buffer.level})
+            self.c2_buffer_occupancies.update({self.env.now : self.c2_buffer.level})
 
             with self.w2_c1_mutex.request() as req1, self.w2_c2_mutex.request() as req2:
                 yield req1 & req2

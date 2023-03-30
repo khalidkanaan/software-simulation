@@ -16,7 +16,7 @@ class Workstation1(object):
         # Time spent idle
         self.idle_time = 0
         # List of buffer occupancies
-        self.c1_buffer_occupancies = []
+        self.c1_buffer_occupancies = dict()
         self.w1_c1_tracker = w1_c1_tracker
         self.w1_c1_mutex = w1_c1_mutex
 
@@ -37,7 +37,7 @@ class Workstation1(object):
             # Wait for component 1 to become available
             yield self.c1_buffer.get(1)
 
-            self.c1_buffer_occupancies.append(self.c1_buffer.level)
+            self.c1_buffer_occupancies.update({self.env.now : self.c1_buffer.level})
 
             with self.w1_c1_mutex.request() as req:
                 yield req

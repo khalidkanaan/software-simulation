@@ -18,9 +18,9 @@ class Workstation3(object):
         # Time spent idle
         self.idle_time = 0
         # List of c1 buffer occupancies
-        self.c1_buffer_occupancies = []
+        self.c1_buffer_occupancies = dict()
         # List of c3 buffer occupancies
-        self.c3_buffer_occupancies = []
+        self.c3_buffer_occupancies = dict()
         self.w3_c1_tracker = w3_c1_tracker
         self.w3_c3_tracker = w3_c3_tracker
         self.w3_c1_mutex = w3_c1_mutex
@@ -33,7 +33,6 @@ class Workstation3(object):
         while True:
 
             # Start time of idle
-            # start_idle_time = time.time()
             start_idle_time = self.env.now
 
             if (self.c1_buffer.level == 2):
@@ -43,8 +42,8 @@ class Workstation3(object):
             # Yields until components 1 and 3 are available
             yield self.c1_buffer.get(1) & self.c3_buffer.get(1)
 
-            self.c1_buffer_occupancies.append(self.c1_buffer.level)
-            self.c3_buffer_occupancies.append(self.c3_buffer.level)
+            self.c1_buffer_occupancies.update({self.env.now : self.c1_buffer.level})
+            self.c3_buffer_occupancies.update({self.env.now : self.c3_buffer.level})
 
             with self.w3_c1_mutex.request() as req1, self.w3_c3_mutex.request() as req2:
                 yield req1 & req2

@@ -30,15 +30,12 @@ class Inspector2(object):
                 yield self.env.timeout(service_time)
 
                 # Start time of Inspector2 being blocked
-                # start_time_blocked = time.time()
                 start_time_blocked = self.env.now
-
-                workstation_2.c2_buffer_occupancies.append(workstation_2.c2_buffer.level)
 
                 # Transfered Component 2 to Workstation 2's buffer
                 yield workstation_2.c2_buffer.put(1)
 
-                workstation_2.c2_buffer_occupancies.append(workstation_2.c2_buffer.level)
+                workstation_2.c2_buffer_occupancies.update({self.env.now : workstation_2.c2_buffer.level})
 
                 with self.w2_c2_mutex.request() as req:
                     yield req
@@ -49,7 +46,6 @@ class Inspector2(object):
                         self.w2_c2_tracker.isLatestComponent = True
                 
                 # Add the time Inspector2 spent blocked
-                # self.blocked_time += (time.time() - start_time_blocked)
                 self.blocked_time += (self.env.now - start_time_blocked)
 
                 print('\***** Transfered C2 to W2 *****/')
@@ -62,15 +58,12 @@ class Inspector2(object):
                 yield self.env.timeout(service_time)
 
                 # Start time of Inspector2 being blocked
-                # start_time_blocked = time.time()
                 start_time_blocked = self.env.now
-
-                workstation_3.c3_buffer_occupancies.append(workstation_3.c3_buffer.level)
 
                 # Transfered Component 3 to Workstation 3's buffer
                 yield workstation_3.c3_buffer.put(1)
 
-                workstation_3.c3_buffer_occupancies.append(workstation_3.c3_buffer.level)
+                workstation_3.c3_buffer_occupancies.update({self.env.now : workstation_3.c3_buffer.level})
 
                 with self.w3_c3_mutex.request() as req:
                     yield req
@@ -81,7 +74,6 @@ class Inspector2(object):
                         self.w3_c3_tracker.isLatestComponent = True
 
                 # Add the time Inspector2 spent blocked
-                # self.blocked_time += (time.time() - start_time_blocked)
                 self.blocked_time += (self.env.now - start_time_blocked)
 
                 print('\***** Transfered C3 to W3 *****/')

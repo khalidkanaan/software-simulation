@@ -63,7 +63,7 @@ class Inspector1(object):
             yield selected_buffer.put(1)
 
             if (workstation_chosen == 1):
-                workstation_1.c1_buffer_occupancies.append(workstation_1.c1_buffer.level)
+                workstation_1.c1_buffer_occupancies.update({self.env.now : workstation_1.c1_buffer.level})
                 with self.w1_c1_mutex.request() as req:
                     yield req
                     self.w1_c1_tracker.start_time = self.env.now
@@ -72,7 +72,7 @@ class Inspector1(object):
                     else:
                         self.w1_c1_tracker.isLatestComponent = True
             elif (workstation_chosen == 2):
-                workstation_2.c1_buffer_occupancies.append(workstation_2.c1_buffer.level)
+                workstation_2.c1_buffer_occupancies.update({self.env.now : workstation_2.c1_buffer.level})
                 with self.w2_c1_mutex.request() as req:
                     yield req
                     self.w2_c1_tracker.start_time = self.env.now
@@ -81,7 +81,7 @@ class Inspector1(object):
                     else:
                         self.w2_c1_tracker.isLatestComponent = True
             elif (workstation_chosen == 3):
-                workstation_3.c1_buffer_occupancies.append(workstation_3.c1_buffer.level)
+                workstation_3.c1_buffer_occupancies.update({self.env.now : workstation_3.c1_buffer.level})
                 with self.w3_c1_mutex.request() as req:
                     yield req
                     self.w3_c1_tracker.start_time = self.env.now
