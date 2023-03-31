@@ -85,7 +85,7 @@ if __name__ == '__main__':
             f'\nWorkstation 1 - {find_list_mean(workstation_1.service_times)}, '
             f'Workstation 2 - {find_list_mean(workstation_2.service_times)}, '
             f'Workstation 3 - {find_list_mean(workstation_3.service_times)}\n'
-            f'Total execution time: {RUNTIME}\n'
+            f'Total execution time: 1500\n'
             f'\nComponents Inspected:\n'
             f'{inspector_1.count} inspected of C1, {inspector_2.count22} inspected of C2, {inspector_2.count23} inspected of C3\n'
             f'\nProducts produced:\n'
