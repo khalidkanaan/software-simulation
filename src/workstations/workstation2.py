@@ -85,6 +85,7 @@ class Workstation2(object):
 
             # Assembly complete message
             print('\***** Assembled: Product 2 *****/')
+            self.notifier.w2_full = False
             count += 1
 
     def start_process(self):

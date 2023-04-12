@@ -21,36 +21,8 @@ class Inspector2(object):
         rv_service_times22 = list(map(float,  open('data/servinsp22.dat', 'r').read().splitlines()))
         rv_service_times23 = list(map(float, open('data/servinsp23.dat', 'r').read().splitlines()))
         while True:
-            # Randomly decide which component to make
-            if bool(random.getrandbits(1)):  
-                # Generate service time for component 2 using exponential distribution
-                service_time = rv_service_times22[self.count22]
-                self.service_times22.append(service_time)
-                # Wait for the service time
-                yield self.env.timeout(service_time)
-
-                # Start time of Inspector2 being blocked
-                start_time_blocked = self.env.now
-
-                # Transfered Component 2 to Workstation 2's buffer
-                yield workstation_2.c2_buffer.put(1)
-
-                workstation_2.c2_buffer_occupancies.update({self.env.now : workstation_2.c2_buffer.level})
-
-                with self.w2_c2_mutex.request() as req:
-                    yield req
-                    self.w2_c2_tracker.start_time = self.env.now
-                    if (workstation_2.c2_buffer.level == 1):
-                        self.w2_c2_tracker.isLatestComponent = False
-                    else:
-                        self.w2_c2_tracker.isLatestComponent = True
-                
-                # Add the time Inspector2 spent blocked
-                self.blocked_time += (self.env.now - start_time_blocked)
-
-                print('\***** Transfered C2 to W2 *****/')
-                self.count22 += 1
-            else:
+            # Check which component has a higher demand
+            if workstation_3.c3_buffer.level == workstation_2.c2_buffer.level:
                 # Generate service time for component 3 using exponential distribution
                 service_time = rv_service_times23[self.count23]
                 self.service_times23.append(service_time)
@@ -60,7 +32,7 @@ class Inspector2(object):
                 # Start time of Inspector2 being blocked
                 start_time_blocked = self.env.now
 
-                # Transfered Component 3 to Workstation 3's buffer
+                # Transfer Component 3 to Workstation 3's buffer
                 yield workstation_3.c3_buffer.put(1)
 
                 workstation_3.c3_buffer_occupancies.update({self.env.now : workstation_3.c3_buffer.level})
@@ -78,6 +50,34 @@ class Inspector2(object):
 
                 print('\***** Transfered C3 to W3 *****/')
                 self.count23 += 1
+            else:
+                # Generate service time for component 2 using exponential distribution
+                service_time = rv_service_times22[self.count22]
+                self.service_times22.append(service_time)
+                # Wait for the service time
+                yield self.env.timeout(service_time)
+
+                # Start time of Inspector2 being blocked
+                start_time_blocked = self.env.now
+
+                # Transfer Component 2 to Workstation 2's buffer
+                yield workstation_2.c2_buffer.put(1)
+
+                workstation_2.c2_buffer_occupancies.update({self.env.now : workstation_2.c2_buffer.level})
+
+                with self.w2_c2_mutex.request() as req:
+                    yield req
+                    self.w2_c2_tracker.start_time = self.env.now
+                    if (workstation_2.c2_buffer.level == 1):
+                        self.w2_c2_tracker.isLatestComponent = False
+                    else:
+                        self.w2_c2_tracker.isLatestComponent = True
+                
+                # Add the time Inspector2 spent blocked
+                self.blocked_time += (self.env.now - start_time_blocked)
+
+                print('\***** Transfered C2 to W2 *****/')
+                self.count22 += 1
             
 
     def start_process(self, workstation_2, workstation_3):

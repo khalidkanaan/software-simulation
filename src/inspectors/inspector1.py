@@ -27,10 +27,17 @@ class Inspector1(object):
             c1_lst = [workstation_1.c1_buffer, workstation_2.c1_buffer,
                   workstation_3.c1_buffer]
             
-            # Find the buffer with the least number of type 1 components, if full wait until a workstation is available
+            # Choose the buffer based on demand.
             if (not self.notifier.all_workstations_full()):
-                selected_buffer = min(c1_lst, key=attrgetter('level'))
-                workstation_chosen = c1_lst.index(selected_buffer) + 1
+                if (not self.notifier.w2_full):
+                    selected_buffer = c1_lst[1]
+                    workstation_chosen = 2
+                elif (not self.notifier.w3_full):
+                    selected_buffer = c1_lst[2]
+                    workstation_chosen = 3
+                elif (not self.notifier.w1_full):
+                    selected_buffer = c1_lst[0]
+                    workstation_chosen = 1
             else:
                 # Start time of Inspector1 being blocked
                 start_time_blocked = self.env.now
